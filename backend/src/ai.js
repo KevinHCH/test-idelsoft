@@ -124,22 +124,22 @@ Answer:`
       },
     })
 
-    console.log("🔍 Full Router Response:", JSON.stringify(response, null, 2))
-    console.log("🔍 Response candidates:", response.candidates)
+    console.log("Full Router Response:", JSON.stringify(response, null, 2))
+    console.log("Response candidates:", response.candidates)
 
     const responseText = response.text?.trim().toLowerCase()
-    console.log("📝 Router response text:", JSON.stringify(responseText))
+    console.log("Router response text:", JSON.stringify(responseText))
 
     if (!responseText) {
-      console.warn("⚠️ No response text from router, defaulting to followup")
+      console.warn("No response text from router, defaulting to followup")
       return "followup"
     }
 
     if (responseText.includes("sales")) {
-      console.log("✅ Router classified as: SALES")
+      console.log("Router classified as: SALES")
       return "sales"
     } else {
-      console.log("✅ Router classified as: FOLLOWUP")
+      console.log("Router classified as: FOLLOWUP")
       return "followup"
     }
   } catch (error) {

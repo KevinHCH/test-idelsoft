@@ -107,8 +107,8 @@ export default async function routes(fastify, options) {
         })}\n\n`
       )
 
-      console.log("✅ Sent assistant type:", assistantType)
-      console.log("🚀 Starting streaming generation...")
+      console.log("Sent assistant type:", assistantType)
+      console.log("Starting streaming generation...")
       let buffer = ""
       let lastSubject = ""
       let lastBody = ""
@@ -116,11 +116,11 @@ export default async function routes(fastify, options) {
       let hasStreamedBody = false
 
       for await (const chunk of stream) {
-        console.log("📦 Received chunk:", JSON.stringify(chunk))
+        console.log("Received chunk:", JSON.stringify(chunk))
 
         if (chunk.text) {
           buffer += chunk.text
-          console.log("📝 Current buffer:", buffer)
+          console.log("Current buffer:", buffer)
           const subjectMatch = buffer.match(/"subject"\s*:\s*"([^"]*)"/)
           if (
             subjectMatch &&
@@ -128,7 +128,7 @@ export default async function routes(fastify, options) {
             subjectMatch[1] !== lastSubject
           ) {
             lastSubject = subjectMatch[1]
-            console.log("📧 Found subject:", lastSubject)
+            console.log("Found subject:", lastSubject)
             if (!hasStreamedSubject || lastSubject.length > 0) {
               reply.raw.write(
                 `data: ${JSON.stringify({
@@ -143,7 +143,7 @@ export default async function routes(fastify, options) {
           const bodyMatch = buffer.match(/"body"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/)
           if (bodyMatch && bodyMatch[1] && bodyMatch[1] !== lastBody) {
             lastBody = bodyMatch[1].replace(/\\"/g, '"').replace(/\\n/g, "\n")
-            console.log("📝 Found body:", lastBody)
+            console.log("Found body:", lastBody)
             if (!hasStreamedBody || lastBody.length > 0) {
               reply.raw.write(
                 `data: ${JSON.stringify({
@@ -192,7 +192,7 @@ export default async function routes(fastify, options) {
 
       if (!hasStreamedSubject || !hasStreamedBody) {
         console.log(
-          "⚠️ No content generated via streaming, using fallback generation..."
+          "No content generated via streaming, using fallback generation..."
         )
 
         try {
@@ -203,7 +203,7 @@ export default async function routes(fastify, options) {
           )
 
           if (!hasStreamedSubject && fallbackResult.subject) {
-            console.log("📧 Sending fallback subject:", fallbackResult.subject)
+            console.log("Sending fallback subject:", fallbackResult.subject)
             reply.raw.write(
               `data: ${JSON.stringify({
                 type: "subject",
@@ -213,7 +213,7 @@ export default async function routes(fastify, options) {
           }
 
           if (!hasStreamedBody && fallbackResult.body) {
-            console.log("📝 Sending fallback body:", fallbackResult.body)
+            console.log("Sending fallback body:", fallbackResult.body)
             reply.raw.write(
               `data: ${JSON.stringify({
                 type: "body",
@@ -222,11 +222,11 @@ export default async function routes(fastify, options) {
             )
           }
         } catch (fallbackError) {
-          console.error("❌ Fallback generation failed:", fallbackError)
+          console.error("Fallback generation failed:", fallbackError)
         }
       }
 
-      console.log("🏁 Sending completion signal")
+      console.log("Sending completion signal")
       reply.raw.write(`data: ${JSON.stringify({ type: "complete" })}\n\n`)
       reply.raw.end()
     } catch (error) {

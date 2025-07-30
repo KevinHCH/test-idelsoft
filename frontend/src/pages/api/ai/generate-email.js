@@ -13,7 +13,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Prompt is required" })
     }
 
-    console.log("🚀 Starting AI proxy stream for:", prompt)
+    console.log("Starting AI proxy stream for:", prompt)
 
     const backendResponse = await fetch(`${BACKEND_URL}/ai/generate-email`, {
       method: "POST",
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       })
     }
 
-    console.log("✅ Proxying stream to frontend...")
+    console.log("Proxying stream to frontend...")
 
     // Set SSE headers
     res.writeHead(200, {
@@ -54,19 +54,19 @@ export default async function handler(req, res) {
         const { done, value } = await reader.read()
 
         if (done) {
-          console.log("🏁 Backend stream ended")
+          console.log("Backend stream ended")
           res.end()
           break
         }
 
         const chunk = decoder.decode(value, { stream: true })
-        console.log("📦 Proxying chunk:", chunk)
+        console.log("Proxying chunk:", chunk)
 
         // Forward the chunk directly to the frontend
         res.write(chunk)
       }
     } catch (error) {
-      console.error("❌ AI API Proxy Error:", error)
+      console.error("AI API Proxy Error:", error)
 
       if (!res.headersSent) {
         res.status(500).json({ error: "AI generation failed" })
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
       }
     }
   } catch (error) {
-    console.error("❌ AI API Proxy Error:", error)
+    console.error("AI API Proxy Error:", error)
     if (!res.headersSent) {
       res.status(500).json({ error: "AI generation failed" })
     }
